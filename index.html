@@ -1,0 +1,1463 @@
+<!doctype html>
+
+<html lang="vi">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<meta name="theme-color" content="#080d1b">
+
+<title>Hào Toán RPG V4.2</title>
+
+<style>
+
+:root{--bg:#080d1b;--panel:#141f36;--panel2:#101a2e;--text:#f4f7ff;--muted:#9aa9c5;--cyan:#48d8ff;--green:#38e69a;--red:#ff6078;--yellow:#ffd45e;--purple:#b58aff;--line:#304363;--shadow:0 16px 45px #0006}
+
+*{box-sizing:border-box}
+
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% -10%,#173457 0,#080d1b 48%,#050914 100%);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);display:flex;justify-content:center;padding:16px 12px 28px;touch-action:manipulation}
+
+button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulation}
+
+button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+.app{width:min(100%,480px);min-height:680px;position:relative}
+
+.top{display:flex;align-items:center;justify-content:space-between;margin:4px 3px 16px}
+
+.brand{font-weight:900;font-size:clamp(23px,6vw,31px);letter-spacing:-1px}
+
+.brand span{color:var(--cyan)}
+
+.topstats{display:flex;gap:8px}
+
+.pill{background:#172641;border:1px solid #2b4165;border-radius:999px;padding:7px 11px;font-size:13px;color:var(--yellow);font-weight:800}
+
+.screen{display:none;animation:appear .18s ease}
+
+.screen.active{display:block}
+
+@keyframes appear{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+.hero{text-align:center;padding:12px 0 18px}
+
+.eyebrow{color:var(--purple);font-size:12px;font-weight:900;letter-spacing:2px}
+
+.hero h1{font-size:30px;margin:6px 0}
+
+.sub{color:var(--muted);font-size:14px}
+
+.panel{background:linear-gradient(145deg,#182640,#101a2e);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:var(--shadow);margin:12px 0}
+
+.section-title{font-size:13px;color:var(--muted);font-weight:900;letter-spacing:1.3px;margin:4px 0 12px}
+
+.mode-grid{display:grid;grid-template-columns:1fr;gap:10px}
+
+.mode{display:flex;align-items:center;justify-content:space-between;text-align:left;background:#111d33;border:1px solid #314563;border-radius:15px;padding:14px 15px;transition:.15s}
+
+.mode:active,.btn:active,.answer:active{transform:scale(.98)}
+
+.mode strong{display:block;font-size:16px}
+
+.mode small{display:block;color:var(--muted);margin-top:3px}
+
+.mode .badge{font-size:12px;font-weight:900;padding:6px 9px;border-radius:10px;background:#1c3550;color:var(--cyan)}
+
+.mode.easy{border-left:4px solid var(--green)}
+
+.mode.medium{border-left:4px solid var(--cyan)}
+
+.mode.hard{border-left:4px solid var(--red)}
+
+.mode.survival{border-left:4px solid var(--purple)}
+
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+
+.btn{border-radius:13px;padding:13px 12px;font-weight:850;background:#1b2c49;border:1px solid #385477}
+
+.btn.primary{background:linear-gradient(110deg,#087fa9,#3856b7);border:0}
+
+.btn.purple{background:#392b5e;border-color:#7056a4}
+
+.btn.danger{background:#512638;border-color:#8e4057}
+
+.btn.muted{background:#1a2438}
+
+.hint{text-align:center;color:var(--muted);font-size:12px;margin:14px 0}
+
+.game-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+
+.game-stat{flex:1;background:#14223b;border:1px solid #2d4262;border-radius:13px;padding:10px;text-align:center}
+
+.game-stat small{display:block;color:var(--muted);font-size:11px}
+
+.game-stat b{font-size:19px}
+
+.progress{height:10px;background:#263550;border-radius:20px;overflow:hidden;margin:14px 0}
+
+.progress>i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--green),var(--yellow));transition:none;will-change:width}
+
+.question{min-height:230px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;margin:15px 0}
+
+.question .tag{font-size:12px;color:var(--muted);font-weight:800;letter-spacing:1.5px}
+
+.equation{font-size:clamp(36px,11vw,54px);font-weight:950;letter-spacing:-2px;margin:18px 0 4px}
+
+.equation .eq-result{color:var(--cyan)}
+
+.boss{color:var(--red);font-size:13px;font-weight:900;min-height:20px}
+
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.answer{min-height:118px;border-radius:19px;font-size:24px;font-weight:950;border:2px solid}
+
+.answer span{display:block;font-size:13px;margin-top:4px;letter-spacing:1px}
+
+.answer.yes{background:#103d35;border-color:#2bd99a;color:#57f0b2}
+
+.answer.no{background:#48202f;border-color:#f45d78;color:#ff8295}
+
+.feedback{text-align:center;min-height:28px;margin:12px 0 0;font-weight:800;color:var(--yellow)}
+
+.game-bottom{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:14px}
+
+.result{text-align:center;padding:26px 10px}
+
+.result .score{font-size:66px;font-weight:950;color:var(--cyan);line-height:1.1;margin:10px}
+
+.result h2{font-size:28px;margin:0}
+
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}
+
+.result-grid div{background:#101b30;border:1px solid var(--line);padding:13px;border-radius:13px}
+
+.result-grid small{display:block;color:var(--muted)}
+
+.result-grid b{font-size:20px}
+
+.tabs{display:flex;gap:7px;margin:12px 0}
+
+.tab{flex:1;padding:10px 6px;background:#111d33;border:1px solid #304363;border-radius:12px;font-size:12px;font-weight:850;color:var(--muted)}
+
+.tab.active{background:#243b60;color:white;border-color:var(--cyan)}
+
+.profile-top{display:flex;align-items:center;gap:14px}
+
+.avatar{width:62px;height:62px;display:grid;place-items:center;border-radius:18px;background:linear-gradient(145deg,#146a8e,#5743a2);font-size:30px}
+
+.xpbar{height:10px;background:#293750;border-radius:20px;overflow:hidden;margin:9px 0}
+
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));width:0}
+
+.statline{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin:9px 0}
+
+.shop-item{display:flex;justify-content:space-between;align-items:center;padding:12px 2px;border-bottom:1px solid #2b3a55}
+
+.shop-item:last-child{border:0}
+
+.shop-item small{display:block;color:var(--muted)}
+
+.shop-item button{padding:8px 12px;border-radius:10px;background:#263c5e;color:var(--cyan);font-weight:800}
+
+.achievement{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #2b3a55}
+
+.achievement:last-child{border:0}
+
+.achievement small{display:block;color:var(--muted)}
+
+.achievement .state{font-size:12px;color:var(--yellow);font-weight:900;white-space:nowrap}
+
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.stats-grid div{padding:14px;background:#101b30;border:1px solid var(--line);border-radius:14px}
+
+.stats-grid small{display:block;color:var(--muted)}
+
+.stats-grid b{font-size:23px}
+
+.back{margin:4px 0 12px;background:none;color:var(--cyan);font-weight:800;padding:8px 0}
+
+.footer{text-align:center;color:#657794;font-size:11px;margin:20px 0 0}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#1b3150;border:1px solid var(--cyan);padding:11px 16px;border-radius:12px;box-shadow:var(--shadow);font-weight:800;z-index:5;transition:.2s;max-width:90%;text-align:center}
+
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.modal{position:fixed;inset:0;background:#000a;display:none;place-items:center;padding:20px;z-index:10}
+
+.modal.show{display:grid}
+
+.modal-box{width:min(100%,360px);background:#17243c;border:1px solid #52698e;border-radius:20px;padding:22px;text-align:center}
+
+.modal-box p{color:var(--muted)}
+
+body.ocean{--bg:#041a2b;--panel:#102d45}
+
+body.sunset{--bg:#24101d;--panel:#3b1d32}
+
+body.purple{--bg:#1b1030;--panel:#2d1d49}
+
+@media(min-width:520px){
+
+.mode-grid{grid-template-columns:1fr 1fr}
+
+.mode{min-height:92px}
+
+.mode.survival{grid-column:1/-1}
+
+.app{padding-top:8px}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="top">
+
+<div class="brand">HÀO TOÁN <span>⚡ RPG</span></div>
+
+<div class="topstats">
+
+<div class="pill" id="levelPill">CẤP 1</div>
+
+<div class="pill" id="coinPill">🪙 0</div>
+
+</div>
+
+</header>
+
+<main>
+
+<section id="home" class="screen active">
+
+<div class="hero">
+
+<div class="eyebrow">MATH QUEST • V4.2</div>
+
+<h1>Chinh phục thử thách!</h1>
+
+<div class="sub">Tính nhanh · Giữ combo · Lên cấp · Đánh bại Boss</div>
+
+</div>
+
+<div class="panel">
+
+<div class="section-title">CHỌN CHẾ ĐỘ</div>
+
+<div class="mode-grid">
+
+<button type="button" class="mode easy" data-mode="easy">
+
+<div><strong>🌱 Dễ</strong><small>4 giây/câu · +1 điểm</small></div>
+
+<span class="badge" id="recordEasy">Kỷ lục 0</span>
+
+</button>
+
+<button type="button" class="mode medium" data-mode="medium">
+
+<div><strong>⚡ Vừa</strong><small>3 giây/câu · +2 điểm</small></div>
+
+<span class="badge" id="recordMedium">Kỷ lục 0</span>
+
+</button>
+
+<button type="button" class="mode hard" data-mode="hard">
+
+<div><strong>🔥 Khó</strong><small>2 giây/câu · +3 điểm</small></div>
+
+<span class="badge" id="recordHard">Kỷ lục 0</span>
+
+</button>
+
+<button type="button" class="mode survival" data-mode="survival">
+
+<div><strong>💀 Sinh tồn</strong><small>Không giới hạn câu hỏi · tốc độ tăng dần · sai hoặc hết giờ là kết thúc</small></div>
+
+<span class="badge">VÔ TẬN</span>
+
+</button>
+
+</div>
+
+<div class="actions">
+
+<button type="button" class="btn" id="statsBtn">📊 Thống kê</button>
+
+<button type="button" class="btn purple" id="rpgBtn">🛡️ Hồ sơ RPG</button>
+
+</div>
+
+</div>
+
+<div class="hint">Mỗi câu sẽ đưa ra một phép tính. Chọn ĐÚNG nếu kết quả chính xác, chọn SAI nếu không chính xác.</div>
+
+<button type="button" class="btn danger" style="width:100%" id="resetBtn">Đặt lại toàn bộ dữ liệu</button>
+
+</section>
+
+<section id="game" class="screen">
+
+<div class="game-head">
+
+<div class="game-stat"><small>ĐIỂM</small><b id="score">0</b></div>
+
+<div class="game-stat"><small>COMBO</small><b id="streak">0 🔥</b></div>
+
+<div class="game-stat"><small>CẤP TRẬN</small><b id="gameLevel">1</b></div>
+
+</div>
+
+<div class="progress"><i id="timerBar"></i></div>
+
+<div class="panel question">
+
+<div class="tag" id="modeLabel">CHẾ ĐỘ DỄ</div>
+
+<div class="boss" id="bossLabel"></div>
+
+<div class="equation">
+
+<span id="expression">8 + 4</span><br>
+
+<span class="eq-result">= <span id="shownResult">12</span></span>
+
+</div>
+
+<div class="sub" id="questionHint">Kết quả này đúng hay sai?</div>
+
+</div>
+
+<div class="answers">
+
+<button type="button" class="answer yes" id="yesBtn">✓<span>ĐÚNG</span></button>
+
+<button type="button" class="answer no" id="noBtn">✕<span>SAI</span></button>
+
+</div>
+
+<div class="feedback" id="feedback"></div>
+
+<div class="game-bottom">
+
+<span id="rightCount">Đúng: 0</span>
+
+<button type="button" class="back" id="quitBtn">Thoát trận ×</button>
+
+<span id="timeLabel">4.0s</span>
+
+</div>
+
+</section>
+
+<section id="over" class="screen">
+
+<div class="panel result">
+
+<div class="eyebrow">KẾT THÚC THỬ THÁCH</div>
+
+<h2 id="resultTitle">Tuyệt vời!</h2>
+
+<div class="score" id="finalScore">0</div>
+
+<div class="sub">ĐIỂM SỐ</div>
+
+<div class="result-grid">
+
+<div><small>Câu đúng</small><b id="finalRight">0</b></div>
+
+<div><small>Câu sai</small><b id="finalWrong">0</b></div>
+
+<div><small>Combo cao nhất</small><b id="finalCombo">0</b></div>
+
+<div><small>Độ chính xác</small><b id="finalAccuracy">0%</b></div>
+
+</div>
+
+<div id="newRecord" style="color:var(--yellow);font-weight:900;min-height:24px"></div>
+
+<div class="actions">
+
+<button type="button" class="btn primary" id="againBtn">Chơi lại</button>
+
+<button type="button" class="btn" id="homeBtn">Về menu</button>
+
+</div>
+
+</div>
+
+</section>
+
+<section id="stats" class="screen">
+
+<button type="button" class="back" data-home>‹ MENU</button>
+
+<div class="hero">
+
+<div class="eyebrow">HÀNH TRÌNH CỦA BẠN</div>
+
+<h1>📊 Thống kê</h1>
+
+</div>
+
+<div class="panel">
+
+<div class="stats-grid">
+
+<div><small>Số trận</small><b id="statGames">0</b></div>
+
+<div><small>Tổng câu đúng</small><b id="statRight">0</b></div>
+
+<div><small>Tổng câu sai</small><b id="statWrong">0</b></div>
+
+<div><small>Độ chính xác</small><b id="statAccuracy">0%</b></div>
+
+<div><small>XP</small><b id="statXP">0</b></div>
+
+<div><small>Combo tốt nhất</small><b id="statBestStreak">0</b></div>
+
+</div>
+
+</div>
+
+</section>
+
+<section id="rpg" class="screen">
+
+<button type="button" class="back" data-home>‹ MENU</button>
+
+<div class="hero">
+
+<div class="eyebrow">HỒ SƠ NHÂN VẬT</div>
+
+<h1>🛡️ Hào Thủ</h1>
+
+</div>
+
+<div class="tabs">
+
+<button type="button" class="tab active" data-tab="profile">Nhân vật</button>
+
+<button type="button" class="tab" data-tab="shop">Cửa hàng</button>
+
+<button type="button" class="tab" data-tab="achievements">Thành tích</button>
+
+</div>
+
+<div id="profilePage" class="panel">
+
+<div class="profile-top">
+
+<div class="avatar">🧙</div>
+
+<div style="flex:1">
+
+<b id="rpgLevel">Cấp 1 · Hào Thủ</b>
+
+<div class="sub" id="xpText">0 / 100 XP</div>
+
+<div class="xpbar"><i id="xpBar"></i></div>
+
+</div>
+
+</div>
+
+<div class="statline"><span>🪙 Xu hiện có</span><b id="rpgCoins">0</b></div>
+
+<div class="statline"><span>📅 Nhiệm vụ ngày</span><b id="dailyText">0 / 20</b></div>
+
+<div class="statline"><span>🔥 Chuỗi ngày hoàn thành</span><b id="dailyStreak">0</b></div>
+
+<div class="sub" id="dailyRewardText">Đạt 20 câu đúng trong ngày để nhận 50 xu.</div>
+
+</div>
+
+<div id="shopPage" class="panel" hidden>
+
+<div class="section-title">CHỦ ĐỀ GIAO DIỆN</div>
+
+<div id="shopList"></div>
+
+</div>
+
+<div id="achievementsPage" class="panel" hidden>
+
+<div class="section-title">HUY HIỆU ĐÃ MỞ KHÓA</div>
+
+<div id="achievementList"></div>
+
+</div>
+
+</section>
+
+</main>
+
+<div class="footer">HÀO TOÁN RPG V4.2 · Dữ liệu được lưu trên trình duyệt này</div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal" id="modal">
+
+<div class="modal-box">
+
+<h2 id="modalTitle">Xác nhận</h2>
+
+<p id="modalText">Bạn có chắc không?</p>
+
+<div class="actions">
+
+<button type="button" class="btn danger" id="modalYes">Xác nhận</button>
+
+<button type="button" class="btn" id="modalNo">Hủy</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+(()=>{
+
+'use strict';
+
+const $=id=>document.getElementById(id);
+
+const today=()=>new Date().toISOString().slice(0,10);
+
+const defaults=()=>({
+
+ records:{easy:0,medium:0,hard:0,survival:0},
+
+ games:0,right:0,wrong:0,xp:0,coins:0,level:1,
+
+ ownedThemes:['neon'],theme:'neon',achievements:[],
+
+ dailyDate:today(),dailyCorrect:0,dailyClaimed:false,
+
+ dailyStreak:0,dailyLastCompleted:'',bestStreak:0
+
+});
+
+let data=load(),mode='easy',score=0,streak=0,bestCombo=0;
+
+let rightGame=0,wrongGame=0,levelGame=1;
+
+let timeLeft=0,timeLimit=4,question=null,playing=false;
+
+let raf=0,lastTick=0,lastHudUpdate=0;
+
+let feedbackLock=false,toastTimer=0,modalAction=null;
+
+let lastAnswerPointer=0;
+
+const modes={
+
+ easy:{label:'DỄ',time:4,points:1,range:20},
+
+ medium:{label:'VỪA',time:3,points:2,range:50},
+
+ hard:{label:'KHÓ',time:2,points:3,range:100},
+
+ survival:{label:'SINH TỒN',time:4,points:2,range:30}
+
+};
+
+const themes={
+
+ neon:{name:'NEON',price:0,icon:'🌌'},
+
+ ocean:{name:'OCEAN',price:80,icon:'🌊'},
+
+ sunset:{name:'SUNSET',price:120,icon:'🌇'},
+
+ purple:{name:'PURPLE',price:160,icon:'🔮'}
+
+};
+
+const achievements=[
+
+ ['FIRST_WIN','Khởi đầu','Trả lời đúng câu đầu tiên',()=>data.right>=1],
+
+ ['RIGHT_50','Tập sự','Đạt 50 câu đúng',()=>data.right>=50],
+
+ ['RIGHT_200','Cao thủ','Đạt 200 câu đúng',()=>data.right>=200],
+
+ ['RIGHT_500','Bậc thầy','Đạt 500 câu đúng',()=>data.right>=500],
+
+ ['RIGHT_1000','Huyền thoại','Đạt 1.000 câu đúng',()=>data.right>=1000],
+
+ ['STREAK_5','Combo x5','Đạt combo 5',()=>bestCombo>=5||data.bestStreak>=5],
+
+ ['STREAK_10','Combo x10','Đạt combo 10',()=>bestCombo>=10||data.bestStreak>=10],
+
+ ['STREAK_20','Combo x20','Đạt combo 20',()=>bestCombo>=20||data.bestStreak>=20],
+
+ ['GAMES_10','Chăm chỉ','Chơi 10 trận',()=>data.games>=10],
+
+ ['GAMES_50','Bền bỉ','Chơi 50 trận',()=>data.games>=50],
+
+ ['CORRECT_20_GAME','Kiên trì','Đúng 20 câu trong một trận',()=>rightGame>=20],
+
+ ['DAILY_7','Thử thách 7 ngày','Hoàn thành nhiệm vụ 7 ngày liên tiếp',()=>data.dailyStreak>=7],
+
+ ['SURVIVOR_30','Người sống sót','Đúng 30 câu trong chế độ sinh tồn',()=>mode==='survival'&&rightGame>=30]
+
+];
+
+function load(){
+
+ try{
+
+  const d=JSON.parse(localStorage.getItem('hao_toan_rpg_v4')||'null');
+
+  if(!d)return defaults();
+
+  const b={...defaults(),...d};
+
+  b.records={...defaults().records,...(d.records||{})};
+
+  if(b.dailyDate!==today()){
+
+   b.dailyDate=today();
+
+   b.dailyCorrect=0;
+
+   b.dailyClaimed=false;
+
+  }
+
+  return b;
+
+ }catch(e){return defaults()}
+
+}
+
+function save(){
+
+ try{
+
+  localStorage.setItem('hao_toan_rpg_v4',JSON.stringify(data));
+
+ }catch(e){
+
+  toast('Không thể lưu dữ liệu trên trình duyệt này.');
+
+ }
+
+}
+
+function show(name){
+
+ document.querySelectorAll('.screen').forEach(s=>{
+
+  s.classList.toggle('active',s.id===name);
+
+ });
+
+}
+
+function toast(msg){
+
+ $('toast').textContent=msg;
+
+ $('toast').classList.add('show');
+
+ clearTimeout(toastTimer);
+
+ toastTimer=setTimeout(()=>$('toast').classList.remove('show'),1900);
+
+}
+
+function modal(title,msg,yes){
+
+ $('modalTitle').textContent=title;
+
+ $('modalText').textContent=msg;
+
+ $('modal').classList.add('show');
+
+ modalAction=yes;
+
+}
+
+function updateTop(){
+
+ $('levelPill').textContent='CẤP '+(Math.floor(data.xp/100)+1);
+
+ $('coinPill').textContent='🪙 '+data.coins;
+
+ $('recordEasy').textContent='Kỷ lục '+data.records.easy;
+
+ $('recordMedium').textContent='Kỷ lục '+data.records.medium;
+
+ $('recordHard').textContent='Kỷ lục '+data.records.hard;
+
+}
+
+function applyTheme(){
+
+ document.body.classList.remove('ocean','sunset','purple');
+
+ if(data.theme!=='neon')document.body.classList.add(data.theme);
+
+}
+
+function rand(n){return Math.floor(Math.random()*n)}
+
+function makeQuestion(){
+
+ const range=modes[mode].range;
+
+ let a,b,op,real;
+
+ const ops=mode==='easy'?['+','-']:
+
+            mode==='medium'?['+','-','×']:
+
+            ['+','-','×','÷'];
+
+ op=ops[rand(ops.length)];
+
+ if(op==='+'){
+
+  a=rand(range)+1;
+
+  b=rand(range)+1;
+
+  real=a+b;
+
+ }else if(op==='-'){
+
+  a=rand(range)+1;
+
+  b=rand(a)+1;
+
+  real=a-b;
+
+ }else if(op==='×'){
+
+  a=rand(Math.min(12,Math.ceil(range/2)))+2;
+
+  b=rand(10)+2;
+
+  real=a*b;
+
+ }else{
+
+  b=rand(9)+2;
+
+  real=rand(12)+1;
+
+  a=b*real;
+
+ }
+
+ const isTrue=Math.random()<.5;
+
+ let shown=real;
+
+ if(!isTrue){
+
+  let delta=rand(9)+1;
+
+  shown=real+(Math.random()<.5?-delta:delta);
+
+  if(shown<0)shown=real+delta;
+
+ }
+
+ return{a,b,op,real,shown,isTrue:shown===real};
+
+}
+
+function startGame(selected){
+
+ mode=selected;
+
+ score=streak=bestCombo=rightGame=wrongGame=0;
+
+ levelGame=1;
+
+ playing=true;
+
+ feedbackLock=false;
+
+ timeLimit=modes[mode].time;
+
+ newQuestion();
+
+ show('game');
+
+ $('feedback').textContent='';
+
+ $('modeLabel').textContent='CHẾ ĐỘ '+modes[mode].label;
+
+ lastTick=performance.now();
+
+ lastHudUpdate=0;
+
+ cancelAnimationFrame(raf);
+
+ raf=requestAnimationFrame(tick);
+
+ updateGameUI();
+
+}
+
+function newQuestion(){
+
+ question=makeQuestion();
+
+ timeLimit=mode==='survival'
+
+  ?Math.max(1.15,4-(Math.floor(rightGame/10)*.18))
+
+  :Math.max(1.2,modes[mode].time-(levelGame-1)*.08);
+
+ timeLeft=timeLimit;
+
+ $('expression').textContent=`${question.a} ${question.op} ${question.b}`;
+
+ $('shownResult').textContent=question.shown;
+
+ $('bossLabel').textContent=
+
+  rightGame>0&&rightGame%10===0
+
+  ?'👹 BOSS ĐÃ BỊ ĐÁNH BẠI!':' ';
+
+ $('questionHint').textContent=
+
+  mode==='survival'
+
+  ?'Sinh tồn: tốc độ tăng sau mỗi 10 câu đúng'
+
+  :'Kết quả này đúng hay sai?';
+
+ updateGameUI();
+
+}
+
+function updateGameUI(updateClock=true){
+
+ $('score').textContent=score;
+
+ $('streak').textContent=streak+' 🔥';
+
+ $('gameLevel').textContent=levelGame;
+
+ $('rightCount').textContent='Đúng: '+rightGame;
+
+ if(updateClock){
+
+  $('timeLabel').textContent=timeLeft.toFixed(1)+'s';
+
+ }
+
+ const ratio=Math.max(0,Math.min(1,timeLeft/timeLimit));
+
+ $('timerBar').style.width=(ratio*100)+'%';
+
+ $('timerBar').style.background=
+
+  ratio<.25?'var(--red)':'linear-gradient(90deg,var(--green),var(--yellow))';
+
+}
+
+// Vòng lặp dùng thời gian thực giữa các frame để tránh sai lệch đồng hồ.
+
+function tick(now){
+
+ if(!playing)return;
+
+ const dt=Math.max(0,(now-lastTick)/1000);
+
+ lastTick=now;
+
+ timeLeft-=dt;
+
+ if(timeLeft<=0){
+
+  timeLeft=0;
+
+  updateGameUI(true);
+
+  endGame('Hết giờ!');
+
+  return;
+
+ }
+
+ // Chỉ cập nhật chữ đồng hồ 10 lần/giây để giảm thao tác DOM.
+
+ const hudBucket=Math.floor(now/100);
+
+ if(hudBucket!==lastHudUpdate){
+
+  lastHudUpdate=hudBucket;
+
+  $('timeLabel').textContent=timeLeft.toFixed(1)+'s';
+
+ }
+
+ const ratio=Math.max(0,Math.min(1,timeLeft/timeLimit));
+
+ $('timerBar').style.width=(ratio*100)+'%';
+
+ $('timerBar').style.background=
+
+  ratio<.25?'var(--red)':'linear-gradient(90deg,var(--green),var(--yellow))';
+
+ raf=requestAnimationFrame(tick);
+
+}
+
+function awardXP(){
+
+ data.xp+=10;
+
+ data.coins+=5;
+
+ data.dailyCorrect++;
+
+ if(data.dailyCorrect>=20&&!data.dailyClaimed){
+
+  data.dailyClaimed=true;
+
+  data.coins+=50;
+
+  const t=today();
+
+  const y=new Date(Date.now()-86400000).toISOString().slice(0,10);
+
+  if(data.dailyLastCompleted!==t){
+
+   data.dailyStreak=data.dailyLastCompleted===y?data.dailyStreak+1:1;
+
+   data.dailyLastCompleted=t;
+
+  }
+
+  toast('Hoàn thành nhiệm vụ ngày! +50 xu 🎉');
+
+ }
+
+ data.level=Math.floor(data.xp/100)+1;
+
+}
+
+function unlockAchievements(){
+
+ let changed=false;
+
+ for(const [id,title,desc,check] of achievements){
+
+  if(!data.achievements.includes(id)&&check()){
+
+   data.achievements.push(id);
+
+   data.coins+=20;
+
+   changed=true;
+
+   toast('🏅 Mở khóa: '+title+' (+20 xu)');
+
+  }
+
+ }
+
+ if(changed)save();
+
+}
+
+function answer(value){
+
+ if(!playing||feedbackLock)return;
+
+ feedbackLock=true;
+
+ const correct=value===question.isTrue;
+
+ if(correct){
+
+  streak++;
+
+  bestCombo=Math.max(bestCombo,streak);
+
+  rightGame++;
+
+  data.right++;
+
+  awardXP();
+
+  let pts=modes[mode].points+(streak%5===0?3:0);
+
+  score+=pts;
+
+  if(rightGame%10===0){
+
+   levelGame++;
+
+   data.coins+=10;
+
+   toast('👹 Hạ Boss! +10 xu');
+
+  }
+
+  $('feedback').textContent=
+
+   streak%5===0
+
+   ?'🔥 COMBO x'+streak+' · +'+pts+' điểm'
+
+   :'Chính xác! +'+pts+' điểm';
+
+  $('feedback').style.color='var(--green)';
+
+  if(mode==='survival'&&rightGame%10===0){
+
+   $('bossLabel').textContent='👹 BOSS BỊ ĐÁNH BẠI · +10 xu';
+
+  }
+
+ }else{
+
+  wrongGame++;
+
+  data.wrong++;
+
+  streak=0;
+
+  $('feedback').textContent='Chưa đúng!';
+
+  $('feedback').style.color='var(--red)';
+
+ }
+
+ data.bestStreak=Math.max(data.bestStreak,bestCombo);
+
+ save();
+
+ unlockAchievements();
+
+ updateTop();
+
+ updateGameUI();
+
+ if(!correct){
+
+  setTimeout(()=>endGame('Trả lời sai!'),360);
+
+ }else{
+
+  setTimeout(()=>{
+
+   feedbackLock=false;
+
+   if(playing)newQuestion();
+
+  },180);
+
+ }
+
+}
+
+function endGame(reason){
+
+ if(!playing)return;
+
+ playing=false;
+
+ cancelAnimationFrame(raf);
+
+ data.games++;
+
+ data.records[mode]=Math.max(data.records[mode]||0,score);
+
+ data.bestStreak=Math.max(data.bestStreak,bestCombo);
+
+ unlockAchievements();
+
+ save();
+
+ updateTop();
+
+ $('resultTitle').textContent=
+
+  reason==='Trả lời sai!'?'Lần sau cố hơn nhé!':'Hết giờ rồi!';
+
+ $('finalScore').textContent=score;
+
+ $('finalRight').textContent=rightGame;
+
+ $('finalWrong').textContent=wrongGame;
+
+ $('finalCombo').textContent=bestCombo;
+
+ const total=rightGame+wrongGame;
+
+ $('finalAccuracy').textContent=
+
+  (total?Math.round(rightGame/total*100):0)+'%';
+
+ $('newRecord').textContent=
+
+  score>0&&score===(data.records[mode]||0)
+
+  ?'🏆 Kỷ lục tốt nhất của bạn!':'';
+
+ show('over');
+
+}
+
+function quitGame(){
+
+ modal(
+
+  'Thoát trận đấu?',
+
+  'Trận hiện tại sẽ kết thúc và được tính vào số trận đã chơi.',
+
+  ()=>endGame('Bạn đã thoát trận.')
+
+ );
+
+}
+
+function renderStats(){
+
+ const total=data.right+data.wrong;
+
+ $('statGames').textContent=data.games;
+
+ $('statRight').textContent=data.right;
+
+ $('statWrong').textContent=data.wrong;
+
+ $('statAccuracy').textContent=
+
+  (total?Math.round(data.right/total*100):0)+'%';
+
+ $('statXP').textContent=data.xp;
+
+ $('statBestStreak').textContent=data.bestStreak;
+
+}
+
+function renderRPG(tab='profile'){
+
+ document.querySelectorAll('.tab').forEach(t=>{
+
+  t.classList.toggle('active',t.dataset.tab===tab);
+
+ });
+
+ ['profile','shop','achievements'].forEach(p=>{
+
+  $(p+'Page').hidden=p!==tab;
+
+ });
+
+ const xp=data.xp%100;
+
+ $('rpgLevel').textContent='Cấp '+(Math.floor(data.xp/100)+1)+' · Hào Thủ';
+
+ $('xpText').textContent=xp+' / 100 XP';
+
+ $('xpBar').style.width=xp+'%';
+
+ $('rpgCoins').textContent=data.coins;
+
+ $('dailyText').textContent=
+
+  Math.min(20,data.dailyCorrect)+' / 20'+(data.dailyClaimed?' ✓':'');
+
+ $('dailyStreak').textContent=data.dailyStreak+' ngày';
+
+ $('dailyRewardText').textContent=
+
+  data.dailyClaimed
+
+  ?'Đã nhận 50 xu hôm nay!'
+
+  :'Đạt 20 câu đúng trong ngày để nhận 50 xu.';
+
+ $('shopList').innerHTML=Object.entries(themes).map(([id,t])=>{
+
+  const owned=data.ownedThemes.includes(id);
+
+  const equipped=data.theme===id;
+
+  return `<div class="shop-item">
+
+   <div>
+
+    <b>${t.icon} ${t.name}</b>
+
+    <small>${equipped?'Đang sử dụng':owned?'Đã sở hữu':t.price+' xu'}</small>
+
+   </div>
+
+   <button type="button" data-theme="${id}" ${equipped?'disabled':''}>
+
+    ${equipped?'Đang dùng':owned?'Trang bị':'Mua'}
+
+   </button>
+
+  </div>`;
+
+ }).join('');
+
+ $('achievementList').innerHTML=achievements.map(([id,title,desc])=>{
+
+  const ok=data.achievements.includes(id);
+
+  return `<div class="achievement">
+
+   <div>
+
+    <b>${ok?'🏅':'🔒'} ${title}</b>
+
+    <small>${desc}</small>
+
+   </div>
+
+   <span class="state">${ok?'ĐÃ MỞ':'CHƯA MỞ'}</span>
+
+  </div>`;
+
+ }).join('');
+
+}
+
+function resetData(){
+
+ data=defaults();
+
+ save();
+
+ updateTop();
+
+ applyTheme();
+
+ toast('Đã đặt lại dữ liệu');
+
+}
+
+// Xử lý chạm trực tiếp cho nút ĐÚNG / SAI trên iPhone.
+
+document.addEventListener('pointerup',e=>{
+
+ const b=e.target.closest('#yesBtn, #noBtn');
+
+ if(!b||!playing)return;
+
+ e.preventDefault();
+
+ lastAnswerPointer=Date.now();
+
+ answer(b.id==='yesBtn');
+
+},{passive:false});
+
+// Bộ xử lý click cho menu và các nút khác.
+
+document.addEventListener('click',e=>{
+
+ if(Date.now()-lastAnswerPointer<500&&e.target.closest('#yesBtn, #noBtn'))return;
+
+ const b=e.target.closest('button');
+
+ if(!b||b.disabled)return;
+
+ if(b.dataset.mode){
+
+  startGame(b.dataset.mode);
+
+  return;
+
+ }
+
+ if(b.id==='statsBtn'){
+
+  renderStats();
+
+  show('stats');
+
+  return;
+
+ }
+
+ if(b.id==='rpgBtn'){
+
+  renderRPG();
+
+  show('rpg');
+
+  return;
+
+ }
+
+ if(b.hasAttribute('data-home')){
+
+  show('home');
+
+  return;
+
+ }
+
+ if(b.dataset.tab){
+
+  renderRPG(b.dataset.tab);
+
+  return;
+
+ }
+
+ if(b.id==='quitBtn'){
+
+  quitGame();
+
+  return;
+
+ }
+
+ if(b.id==='againBtn'){
+
+  startGame(mode);
+
+  return;
+
+ }
+
+ if(b.id==='homeBtn'){
+
+  show('home');
+
+  return;
+
+ }
+
+ if(b.id==='resetBtn'){
+
+  modal(
+
+   'Đặt lại dữ liệu?',
+
+   'Toàn bộ kỷ lục, xu, XP và thành tích sẽ bị xóa khỏi trình duyệt.',
+
+   resetData
+
+  );
+
+  return;
+
+ }
+
+ if(b.dataset.theme){
+
+  const id=b.dataset.theme,t=themes[id];
+
+  if(!t)return;
+
+  if(data.ownedThemes.includes(id)){
+
+   data.theme=id;
+
+  }else if(data.coins>=t.price){
+
+   data.coins-=t.price;
+
+   data.ownedThemes.push(id);
+
+   data.theme=id;
+
+   toast('Đã mua chủ đề '+t.name);
+
+  }else{
+
+   toast('Bạn chưa đủ xu!');
+
+   return;
+
+  }
+
+  save();
+
+  applyTheme();
+
+  updateTop();
+
+  renderRPG('shop');
+
+  return;
+
+ }
+
+ if(b.id==='modalYes'){
+
+  const fn=modalAction;
+
+  $('modal').classList.remove('show');
+
+  modalAction=null;
+
+  if(fn)fn();
+
+  return;
+
+ }
+
+ if(b.id==='modalNo'){
+
+  $('modal').classList.remove('show');
+
+  modalAction=null;
+
+  return;
+
+ }
+
+});
+
+// Chặn submit mặc định nếu sau này thêm form.
+
+document.addEventListener('submit',e=>e.preventDefault());
+
+// Hỗ trợ bàn phím.
+
+document.addEventListener('keydown',e=>{
+
+ if(!playing)return;
+
+ if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')answer(true);
+
+ if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')answer(false);
+
+ if(e.key==='Escape')quitGame();
+
+});
+
+updateTop();
+
+applyTheme();
+
+})();
+
+</script>
+
+</body>
+
+</html>
